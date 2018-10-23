@@ -84,6 +84,7 @@ class Handler:
             self.flush()
         except:
             self.handleError()
+            print(msg, file=sys.stderr, flush=True)
 
     def handleError(self):
         ei = sys.exc_info()
@@ -244,6 +245,10 @@ class LogRecord:
                              'asctime':asctime}
         return self.dictrepr
 
+    def __str__(self):
+        asdict = self.asdict()
+        return "%s %s" % (asdict['asctime'], asdict['message'])
+
 class Logger:
     def __init__(self, level=None, handlers=None):
         if level is None:
@@ -288,6 +293,7 @@ class Logger:
 
     def log(self, level, msg, **kw):
         record = LogRecord(level, msg, **kw)
+        print(record)
         for handler in self.handlers:
             if level >= handler.level:
                 handler.emit(record)
